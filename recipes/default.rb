@@ -4,16 +4,16 @@
 #
 # Copyright (c) 2016 The Authors, All Rights Reserved.
 
-package "aide" do
+package node['aide']['package']['install'] do
   action :install
 end
 
-template "/etc/aide/aide.conf" do
-  source "aide.conf.erb"
+template "#{node['aide']['config']['directory']}/aide.conf" do
+  source node['aide']['config']['src']
 end
 
-template "/etc/default/aide" do
-  source "aide.erb"
+template "#{node['aide']['wrapper']['directory']}/aide" do
+  source node['aide']['wrapper']['src']
   notifies :run, 'execute[initialize_aide]', :immediately
 end
 
@@ -25,7 +25,7 @@ end
 
 ruby_block "rename_aide_db" do
   block do
-    ::File.rename("/var/lib/aide/aide.db.new", "/var/lib/aide/aide.db")
+    ::File.rename(node['aide']['db']['new'], node['aide']['db']['using'])
   end
   action :nothing
   notifies :run, 'ruby_block[aide_check]', :delayed
@@ -38,13 +38,13 @@ ruby_block "aide_check" do
   action :nothing
 end
 
-cookbook_file "/usr/local/etc/cron_aide.sh" do
-  source "cron_aide.sh"
-  mode "0755"
+cookbook_file "#{node['aide']['cron']['directory']}/cron_aide.sh" do
+  source node['aide']['cron']['src']
+  mode node['aide']['cron']['chmod']
 end
 
 cron_d "daily_aide_check" do
   minute 0
   hour 5
-  command "/usr/local/etc/cron_aide.sh"
+  command "#{node['aide']['cron']['directory']}/cron_aide.sh"
 end
