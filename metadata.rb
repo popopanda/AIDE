@@ -1,6 +1,6 @@
 name 'aide'
-maintainer 'The Authors'
-maintainer_email 'you@example.com'
+maintainer 'Jeffrey Leung'
+maintainer_email 'jeffrey.leung@fundingcircle.com'
 license 'all_rights'
 description 'Installs/Configures aide'
 long_description 'Installs/Configures aide'

@@ -8,12 +8,26 @@ package node['aide']['package']['install'] do
   action :install
 end
 
+cookbook_file "#{node['aide']['cron']['directory']}/cron_aide.sh" do
+  source node['aide']['cron']['src']
+  mode node['aide']['cron']['chmod']
+end
+
+cron_d "daily_aide_check" do
+  minute 0
+  hour 5
+  command "#{node['aide']['cron']['directory']}/cron_aide.sh"
+end
+
 template "#{node['aide']['config']['directory']}/aide.conf" do
   source node['aide']['config']['src']
 end
 
 template "#{node['aide']['wrapper']['directory']}/aide" do
   source node['aide']['wrapper']['src']
+  variables ({
+    :email => node['aide']['email']
+  })
   notifies :run, 'execute[initialize_aide]', :immediately
 end
 
@@ -36,15 +50,4 @@ ruby_block "aide_check" do
     system('sudo aide.wrapper --check')
   end
   action :nothing
-end
-
-cookbook_file "#{node['aide']['cron']['directory']}/cron_aide.sh" do
-  source node['aide']['cron']['src']
-  mode node['aide']['cron']['chmod']
-end
-
-cron_d "daily_aide_check" do
-  minute 0
-  hour 5
-  command "#{node['aide']['cron']['directory']}/cron_aide.sh"
 end

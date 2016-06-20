@@ -172,3 +172,13 @@ SerMemberDELog = Full+ANF
 # For daemons that log to a variable file name and have the live log
 # hardlinked to a static file name
 LinkedLog = Log-n
+
+MyRule = p+i+n+u+g+s+b+m+c+md5+sha1
+
+/etc MyRule
+/sbin MyRule
+/bin MyRule
+/var MyRule
+!/var/log/.*
+!/var/spool/.
+!/var/lib/aide/.*
